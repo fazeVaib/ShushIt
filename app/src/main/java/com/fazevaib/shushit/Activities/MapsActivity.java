@@ -1,23 +1,26 @@
-package com.fazevaib.shushit;
+package com.fazevaib.shushit.Activities;
 
 import android.Manifest;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.fazevaib.shushit.MyReceiver;
+import com.fazevaib.shushit.MyTrackingService;
+import com.fazevaib.shushit.R;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -35,8 +38,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import static android.os.Build.VERSION_CODES.M;
-
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -44,6 +45,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     Marker marker;
     MyReceiver myReceiver;
     Button b1;
+    Intent savedPlaceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +57,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         final PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.placesFragment);
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+                && !notificationManager.isNotificationPolicyAccessGranted()) {
+
+            Intent intent = new Intent(
+                    android.provider.Settings
+                            .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+
+            startActivity(intent);
+        }
 
         b1 = (Button)findViewById(R.id.buttonAdd);
+        savedPlaceIntent = new Intent(getApplicationContext(), SavedPlacesActivity.class);
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
@@ -90,7 +105,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: 27-07-2017
+                if (marker == null)
+                {
+                    Toast.makeText(getApplicationContext(), "Select a location first", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    LatLng markedPlace = marker.getPosition();
+                    String markedPlaceName = marker.getTitle();
+
+                    Bundle args = new Bundle();
+                    args.putParcelable("markedPlace", markedPlace);
+                    args.putString("markedPlaceName", markedPlaceName);
+
+                    savedPlaceIntent.putExtra("bundle", args);
+                }
             }
         });
 
@@ -191,7 +220,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         {
             case R.id.menuStart:
                 Intent intent = new Intent(this, MyReceiver.class);
+                LatLng markedPlace = marker.getPosition();
+                Bundle args = new Bundle();
+                args.putParcelable("markedPlace", markedPlace);
+                intent.putExtra("bundle", args);
+
                 this.sendBroadcast(intent);
+                Log.i("TAG", "LAtlng sent: " + markedPlace.latitude + " " + markedPlace.longitude);
                 Toast.makeText(this, "Tracking Service has Started", Toast.LENGTH_SHORT)
                         .show();
                 break;
@@ -200,6 +235,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Intent intent2 = new Intent(getApplicationContext(), MyTrackingService.class);
                 getApplicationContext().stopService(intent2);
                 Toast.makeText(getApplicationContext(), "Service Stopped", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.menuYourLocations:
+                startActivity(savedPlaceIntent);
                 break;
         }
         return super.onOptionsItemSelected(item);

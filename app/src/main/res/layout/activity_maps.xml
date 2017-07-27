@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.fazevaib.shushit.MapsActivity">
+    tools:context="com.fazevaib.shushit.Activities.MapsActivity">
 
 
     <LinearLayout
@@ -38,6 +38,6 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.fazevaib.shushit.MapsActivity" />
+        tools:context="com.fazevaib.shushit.Activities.MapsActivity" />
 
 </LinearLayout>

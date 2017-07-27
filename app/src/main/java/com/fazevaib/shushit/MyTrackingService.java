@@ -1,21 +1,28 @@
 package com.fazevaib.shushit;
 
 import android.Manifest;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class MyTrackingService extends Service {
 
     public static final String TAG = "TAG";
     LocationManager locationManager = null;
+    Bundle bundle;
+    LatLng latLng;
 
 
     public MyTrackingService() {
@@ -34,6 +41,21 @@ public class MyTrackingService extends Service {
         public void onLocationChanged(Location location) {
 
             Log.e("TAG", "onLocationChanged: " + location);
+            double destLat = latLng.latitude;
+            double destLng = latLng.longitude;
+
+            double currLat = location.getLatitude();
+            double currLng = location.getLongitude();
+
+            float[] results = new float[1];
+            Location.distanceBetween(destLat, destLng, currLat, currLng, results);
+            float distanceInMeters = results[0];
+
+            if (distanceInMeters < 1000)
+            {
+                AudioManager audio = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+                audio.setRingerMode(0);
+            }
             lastLocation.set(location);
 
         }
@@ -74,6 +96,8 @@ public class MyTrackingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "onStartCommand");
+        bundle = intent.getParcelableExtra("bundle");
+        latLng = bundle.getParcelable("markedPlace");
         super.onStartCommand(intent, flags, startId);
         return Service.START_STICKY;
     }

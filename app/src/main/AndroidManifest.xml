@@ -35,7 +35,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".Activities.MapsActivity"
             android:label="@string/title_activity_maps">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -54,7 +54,7 @@
             android:enabled="true"
             android:exported="true"></receiver>
 
-        <activity android:name=".SavedPlacesActivity"></activity>
+        <activity android:name=".Activities.SavedPlacesActivity"></activity>
     </application>
 
 </manifest>
