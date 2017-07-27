@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -106,9 +105,9 @@ public class MyTrackingService extends Service {
         Log.e(TAG, "onDestroy");
         super.onDestroy();
         if (locationManager != null) {
-            for (int i = 0; i < locationListeners.length; i++) {
+            for (LocationListener locationListener : locationListeners) {
                 try {
-                    locationManager.removeUpdates(locationListeners[i]);
+                    locationManager.removeUpdates(locationListener);
                 } catch (Exception ex) {
                     Log.i(TAG, "fail to remove location listeners, ignore", ex);
                 }

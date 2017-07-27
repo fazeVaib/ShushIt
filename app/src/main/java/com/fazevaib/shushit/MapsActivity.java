@@ -55,12 +55,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 geocoder = new Geocoder(getBaseContext());
                 String placeName = (String) place.getName();
+                LatLng placeLatLng = place.getLatLng();
                 try {
                     List<Address> list = geocoder.getFromLocationName(placeName,1);
                     mMap.clear();
                     Address address = list.get(0);
-                    double lat = address.getLatitude();
-                    double lng = address.getLongitude();
+                    double lat = placeLatLng.latitude;
+                    double lng = placeLatLng.longitude;
 
                     goToLocation(lat, lng, placeName);
                 } catch (IOException e) {
