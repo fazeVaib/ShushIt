@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menuStart"
+        android:title="Start"
+        android:icon="@android:drawable/ic_media_play"
+        />
+    <item
+        android:id="@+id/menuStop"
+        android:title="Stop"
+        android:icon="@android:drawable/ic_media_pause"
+        />
+    <item
+        android:id="@+id/menuYourLocations"
+        android:title="Your Locations"
+        android:icon="@android:drawable/ic_menu_gallery"
+        />
+    <item
+        android:id="@+id/menuSettings"
+        android:title="Settings"
+        android:icon="@android:drawable/ic_menu_share"
+        />
+
+</menu>
