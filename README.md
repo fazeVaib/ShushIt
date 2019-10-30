@@ -1,4 +1,4 @@
 # ShushIt
 
-- Android application that tracks your location and puts phone on silent mode when you arrive nearby the described location.
-- Built using Java and Google Location APIs.
+- An Android app which triggers silent mode during a certain period of time or if the user enters a certain region.
+- Native Android Application built using Java and Google Location APIs.
